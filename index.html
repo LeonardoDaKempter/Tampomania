@@ -223,8 +223,22 @@ h1 {
 #clickBtn:not(.skin-classic) .tampon-body::before { opacity: 0.35; }
 
 /* ============ SHOP ============ */
-.shop { margin-top: 30px; padding: 0 20px; }
-.shop h2 { color: #6a1b9a; text-shadow: 1px 1px 2px rgba(106,27,154,0.2); font-size: 1.6em; }
+.shop { margin-top: 30px; padding: 0; }
+.shop h2 { color: #6a1b9a; text-shadow: 1px 1px 2px rgba(106,27,154,0.2); font-size: 1.6em; margin-bottom: 2px; }
+.scrollHint { color: #b06; font-size: 0.85em; margin: 0 0 4px; opacity: 0.75; }
+
+/* horizontal scroller: all upgrades on one swipeable row */
+.item-row {
+  display: flex; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden;
+  gap: 14px; padding: 12px 22px 20px; margin: 0;
+  scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin; scrollbar-color: #ec407a rgba(248,187,208,0.4);
+}
+.item-row .item { flex: 0 0 210px; margin: 0; scroll-snap-align: center; }
+.item-row::-webkit-scrollbar { height: 10px; }
+.item-row::-webkit-scrollbar-track { background: rgba(248,187,208,0.35); border-radius: 10px; }
+.item-row::-webkit-scrollbar-thumb { background: linear-gradient(90deg,#ec407a,#c2185b); border-radius: 10px; }
+
 .item {
   display: inline-block; margin: 10px; padding: 18px; border-radius: 16px;
   background: linear-gradient(145deg, #ffffff, #fff0f5);
@@ -336,9 +350,9 @@ body.shake { animation: shake 0.3s; }
   </div>
 </div>
 
-<div class="shop" id="skinShop"><h2>🎨 Design-Upgrades</h2><div id="skinItems"></div></div>
+<div class="shop" id="skinShop"><h2>🎨 Design-Upgrades</h2><p class="scrollHint">← zum Blättern seitlich wischen →</p><div id="skinItems" class="item-row"></div></div>
 <div class="shop" id="shop"></div>
-<div class="shop" id="specialShop"><h2>✨ Spezial-Upgrades ✨</h2><div id="specialItems"></div></div>
+<div class="shop" id="specialShop"><h2>✨ Spezial-Upgrades ✨</h2><p class="scrollHint">← zum Blättern seitlich wischen →</p><div id="specialItems" class="item-row"></div></div>
 </div>
 
 <script>
@@ -390,51 +404,74 @@ let combo = 1;
 let comboTimer = null;
 
 const upgrades = [
-  { name: "Praktikantin", baseCost: 10, cps: 0.1, owned: 0, desc: "dreht Tampons von Hand" },
-  { name: "Fabrikarbeiter", baseCost: 50, cps: 1, owned: 0, desc: "automatisiert die Produktion" },
-  { name: "Verpackungsmaschine", baseCost: 1000, cps: 5, owned: 0, desc: "verpackt im Akkord" },
-  { name: "Fließband", baseCost: 25000, cps: 25, owned: 0, desc: "massenhaft Tampons" },
-  { name: "Fabrik-Automatisierung", baseCost: 60000, cps: 100, owned: 0, desc: "vollautomatische Tampon-Fabrik" },
-  { name: "KI-gesteuerte Anlage", baseCost: 300000, cps: 500, owned: 0, desc: "KI optimiert die Tampon-Produktion" },
-  { name: "Regionale Zweigfabrik", baseCost: 1500000, cps: 2500, owned: 0, desc: "eine ganze Tampon-Fabrik nur für dich" },
-  { name: "Globales Vertriebsnetz", baseCost: 10000000, cps: 12000, owned: 0, desc: "Tampons werden weltweit produziert" },
-  { name: "Weltraum-Produktionsstation", baseCost: 35000000, cps: 60000, owned: 0, desc: "Schwerelose Tamponproduktion im Orbit" },
-  { name: "Quantenfabrikator", baseCost: 18000000, cps: 30000000, owned: 0, desc: "erschafft Tampons aus reiner Quantenenergie" }
+  { name: "Praktikantin", baseCost: 8, cps: 0.1, owned: 0, desc: "dreht Tampons von Hand" },
+  { name: "Fabrikarbeiter", baseCost: 45, cps: 1, owned: 0, desc: "automatisiert die Produktion" },
+  { name: "Verpackungsmaschine", baseCost: 220, cps: 5, owned: 0, desc: "verpackt im Akkord" },
+  { name: "Fließband", baseCost: 1200, cps: 25, owned: 0, desc: "massenhaft Tampons" },
+  { name: "Fabrik-Automatisierung", baseCost: 6000, cps: 100, owned: 0, desc: "vollautomatische Tampon-Fabrik" },
+  { name: "KI-gesteuerte Anlage", baseCost: 30000, cps: 500, owned: 0, desc: "KI optimiert die Tampon-Produktion" },
+  { name: "Regionale Zweigfabrik", baseCost: 150000, cps: 2500, owned: 0, desc: "eine ganze Tampon-Fabrik nur für dich" },
+  { name: "Globales Vertriebsnetz", baseCost: 750000, cps: 12000, owned: 0, desc: "Tampons werden weltweit produziert" },
+  { name: "Weltraum-Produktionsstation", baseCost: 3500000, cps: 60000, owned: 0, desc: "Schwerelose Tamponproduktion im Orbit" },
+  { name: "Quantenfabrikator", baseCost: 18000000, cps: 300000, owned: 0, desc: "erschafft Tampons aus reiner Quantenenergie" },
+  { name: "Zeitreise-Manufaktur", baseCost: 100000000, cps: 1500000, owned: 0, desc: "produziert Tampons aus Vergangenheit und Zukunft" },
+  { name: "Paralleluniversum-Netzwerk", baseCost: 600000000, cps: 8000000, owned: 0, desc: "importiert Tampons aus Millionen Realitäten" },
+  { name: "Schwarzes-Loch-Kompressor", baseCost: 4000000000, cps: 45000000, owned: 0, desc: "presst Tampons aus purer Raumzeit" },
+  { name: "Galaktisches Tampon-Imperium", baseCost: 28000000000, cps: 250000000, owned: 0, desc: "beherrscht die Tamponproduktion der ganzen Galaxie" },
+  { name: "Dimensionsportal-Fabrik", baseCost: 200000000000, cps: 1500000000, owned: 0, desc: "Tampons strömen aus tausend Portalen" },
+  { name: "Multiversum-Konglomerat", baseCost: 1500000000000, cps: 9000000000, owned: 0, desc: "jedes Universum arbeitet nur für dich" },
+  { name: "Göttliche Manifestation", baseCost: 10000000000000, cps: 55000000000, owned: 0, desc: "erschafft Tampons durch reinen Willen" },
+  { name: "Urknall-Generator", baseCost: 80000000000000, cps: 350000000000, owned: 0, desc: "jeder Urknall gebiert unendlich neue Tampons" }
 ];
 
 const specialUpgrades = [
-  { id: "critical", name: "Critical Hit", cost: 250, owned: false,
+  { id: "critical", name: "Critical Hit", cost: 1200, owned: false,
     desc: "10% Chance, dass jeder Tick (Klick oder passiv) 10x zählt",
     effect: () => { critChance += 0.10; } },
-  { id: "kordon", name: "Kordon Mode", cost: 50000, owned: false,
+  { id: "kordon", name: "Kordon Mode", cost: 5000, owned: false,
     desc: "Klicks UND passive Produktion zählen doppelt, für immer",
     effect: () => { clickMultiplier *= 2; passiveMultiplier *= 2; } },
-  { id: "supercrit", name: "Super Critical", cost: 250000, owned: false,
+  { id: "supercrit", name: "Super Critical", cost: 25000, owned: false,
     desc: "Weitere 15% Krit-Chance, wirkt auch passiv",
     effect: () => { critChance += 0.15; } },
-  { id: "goldenperiod", name: "Goldene Periode", cost: 750000, owned: false,
+  { id: "goldenperiod", name: "Goldene Periode", cost: 70000, owned: false,
     desc: "Klick- und Passiv-Multiplikator werden erneut verdoppelt",
     effect: () => { clickMultiplier *= 2; passiveMultiplier *= 2; } },
   { id: "autoclicker", name: "67-Mode", cost: 10000, owned: false,
     desc: "Simuliert 67 automatische Klicks pro Sekunde",
     effect: () => { cps += 67 * clickMultiplier; } },
-  { id: "megacrit", name: "Mega Critical", cost: 5000000, owned: false,
+  { id: "megacrit", name: "Mega Critical", cost: 500000, owned: false,
     desc: "Kritische Treffer zählen jetzt 25x statt 10x, auch passiv",
     effect: () => { critMultiplier = 25; } },
-  { id: "diddyparty", name: "Diddy Party", cost: 10000000, owned: false,
+  { id: "diddyparty", name: "Diddy Party", cost: 1000000, owned: false,
     desc: "Wilde Party-Boost: verdreifacht dauerhaft ALLE Produktionswerte (Klick + passiv)",
-    effect: () => { clickMultiplier *= 3; passiveMultiplier *= 3; } }
+    effect: () => { clickMultiplier *= 3; passiveMultiplier *= 3; } },
+  { id: "hyperfabrik", name: "Hyper-Produktion", cost: 8000000, owned: false,
+    desc: "Passive Produktion wird dauerhaft ver-5-facht",
+    effect: () => { passiveMultiplier *= 5; } },
+  { id: "goldenhands", name: "Goldene Hände", cost: 40000000, owned: false,
+    desc: "Jeder Klick zählt dauerhaft 10x",
+    effect: () => { clickMultiplier *= 10; } },
+  { id: "omnicrit", name: "Omni-Kritisch", cost: 250000000, owned: false,
+    desc: "Weitere 25% Krit-Chance auf ALLES",
+    effect: () => { critChance += 0.25; } },
+  { id: "bigbang", name: "Urknall-Boost", cost: 2000000000, owned: false,
+    desc: "Verzehnfacht dauerhaft ALLE Produktionswerte (Klick + passiv)",
+    effect: () => { clickMultiplier *= 10; passiveMultiplier *= 10; } },
+  { id: "infinity", name: "Unendlichkeits-Modus", cost: 100000000000, owned: false,
+    desc: "Kritische Treffer zählen jetzt gigantische 100x",
+    effect: () => { critMultiplier = 100; } }
 ];
 
 /* ---------- skins (design upgrades) ---------- */
 const skins = [
-  { id: "classic", name: "Klassik-Baumwolle", cls: "skin-classic", cost: 0,     owned: true,  preview: "linear-gradient(90deg,#d4c3ae,#fffcf5,#d4c3ae)", desc: "Das cremeweiße Original." },
-  { id: "red",      name: "Rot-Edition 🩸",    cls: "skin-red",     cost: 500,   owned: false, preview: "linear-gradient(90deg,#7a0000,#ff5252,#7a0000)", desc: "Die blutrote Extra-Stark-Version." },
-  { id: "gold",     name: "Gold-Deluxe",       cls: "skin-gold",    cost: 25000, owned: false, preview: "linear-gradient(90deg,#8a6d00,#ffd700,#8a6d00)", desc: "24-Karat für Luxus-Perioden." },
-  { id: "neon",     name: "Neon-Rave",         cls: "skin-neon",    cost: 800000, owned: false, preview: "linear-gradient(90deg,#00332e,#39ff14,#00332e)", desc: "Leuchtet im Dunkeln der Disco." },
-  { id: "diamond",  name: "Diamant-Eis",       cls: "skin-diamond", cost: 2500000,owned: false, preview: "linear-gradient(115deg,#a8e6ff,#fff,#7fd4ff)", desc: "Kristallklar und eiskalt." },
-  { id: "galaxy",   name: "Galaxie",           cls: "skin-galaxy",  cost: 90000000,owned: false, preview: "linear-gradient(120deg,#1a0033,#7b1fa2,#1a0033)", desc: "Ein Tampon aus dem Universum." },
-  { id: "rainbow",  name: "Regenbogen 🌈",     cls: "skin-rainbow", cost: 500000000,owned: false,preview: "linear-gradient(90deg,#ff004c,#ffe600,#00b0ff,#d500f9)", desc: "Der legendäre Alleskönner." }
+  { id: "classic", name: "Klassik-Baumwolle", cls: "skin-classic", cost: 0,         owned: true,  preview: "linear-gradient(90deg,#d4c3ae,#fffcf5,#d4c3ae)", desc: "Das cremeweiße Original." },
+  { id: "red",      name: "Rot-Edition 🩸",    cls: "skin-red",     cost: 5000,      owned: false, preview: "linear-gradient(90deg,#7a0000,#ff5252,#7a0000)", desc: "Die blutrote Extra-Stark-Version." },
+  { id: "gold",     name: "Gold-Deluxe",       cls: "skin-gold",    cost: 250000,    owned: false, preview: "linear-gradient(90deg,#8a6d00,#ffd700,#8a6d00)", desc: "24-Karat für Luxus-Perioden." },
+  { id: "neon",     name: "Neon-Rave",         cls: "skin-neon",    cost: 2500000,   owned: false, preview: "linear-gradient(90deg,#00332e,#39ff14,#00332e)", desc: "Leuchtet im Dunkeln der Disco." },
+  { id: "diamond",  name: "Diamant-Eis",       cls: "skin-diamond", cost: 25000000,  owned: false, preview: "linear-gradient(115deg,#a8e6ff,#fff,#7fd4ff)", desc: "Kristallklar und eiskalt." },
+  { id: "galaxy",   name: "Galaxie",           cls: "skin-galaxy",  cost: 400000000, owned: false, preview: "linear-gradient(120deg,#1a0033,#7b1fa2,#1a0033)", desc: "Ein Tampon aus dem Universum." },
+  { id: "rainbow",  name: "Regenbogen 🌈",     cls: "skin-rainbow", cost: 10000000000,owned: false,preview: "linear-gradient(90deg,#ff004c,#ffe600,#00b0ff,#d500f9)", desc: "Der legendäre Alleskönner." }
 ];
 let activeSkin = "classic";
 
@@ -455,7 +492,7 @@ function cost(u) { return Math.floor(u.baseCost * Math.pow(1.15, u.owned)); }
 function fmt(n) {
   n = Math.floor(n);
   if (n < 1000) return n.toString();
-  const units = ["", "K", "Mio", "Mrd", "Bio"];
+  const units = ["", "K", "Mio", "Mrd", "Bio", "Brd", "Trd", "Qua", "Qui"];
   let i = 0;
   while (n >= 1000 && i < units.length - 1) { n /= 1000; i++; }
   return n.toFixed(n < 10 ? 2 : n < 100 ? 1 : 0) + " " + units[i];
@@ -464,8 +501,9 @@ function fmt(n) {
 let shopBuilt = false, specialShopBuilt = false, skinShopBuilt = false;
 
 function buildShop() {
-  shopEl.innerHTML = '<h2>🏭 Produktions-Upgrades</h2>';
+  shopEl.innerHTML = '<h2>🏭 Produktions-Upgrades</h2><p class="scrollHint">← zum Blättern seitlich wischen →</p>';
   const wrap = document.createElement('div');
+  wrap.className = 'item-row';
   upgrades.forEach((u, i) => {
     const div = document.createElement('div');
     div.className = 'item';
@@ -677,7 +715,8 @@ setInterval(() => {
 }, 100);
 
 /* ---------- milestones ---------- */
-const milestones = [100, 1000, 10000, 100000, 1000000, 10000000];
+const milestones = [100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000,
+  10000000000, 100000000000, 1000000000000, 100000000000000];
 let msIndex = 0;
 setInterval(() => {
   if (msIndex < milestones.length && tampons >= milestones[msIndex]) {
@@ -692,56 +731,111 @@ update();
 let audioCtx = null, musicPlaying = false, musicIntervals = [];
 
 function startMusic() {
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  const melody = [523.25, 587.33, 659.25, 783.99, 880.00, 783.99, 659.25, 587.33,
-                   523.25, 659.25, 783.99, 1046.50, 880.00, 783.99, 659.25, 523.25];
-  const bassline = [130.81, 130.81, 146.83, 146.83, 164.81, 164.81, 130.81, 130.81];
-  let mi = 0, bi = 0;
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  // mobile browsers (iOS/Safari, Chrome Android) start suspended: resume on the gesture
+  if (audioCtx.state === 'suspended') audioCtx.resume();
 
-  function playMelodyNote() {
-    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
-    osc.type = 'sawtooth'; osc.frequency.value = melody[mi % melody.length];
-    gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.06, audioCtx.currentTime + 0.03);
-    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.22);
-    const filter = audioCtx.createBiquadFilter();
-    filter.type = 'lowpass'; filter.frequency.value = 3000;
-    osc.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.25); mi++;
+  // --- master chain with a gentle lowpass so it never gets harsh ---
+  const master = audioCtx.createGain();
+  master.gain.value = 0.45;
+  const masterFilter = audioCtx.createBiquadFilter();
+  masterFilter.type = 'lowpass';
+  masterFilter.frequency.value = 6500;
+  master.connect(masterFilter);
+  masterFilter.connect(audioCtx.destination);
+
+  // --- ping-pong-ish echo send for the lead ---
+  const delay = audioCtx.createDelay();
+  delay.delayTime.value = 0.26;
+  const feedback = audioCtx.createGain();
+  feedback.gain.value = 0.3;
+  const echoOut = audioCtx.createGain();
+  echoOut.gain.value = 0.5;
+  delay.connect(feedback); feedback.connect(delay);
+  delay.connect(echoOut); echoOut.connect(master);
+
+  function tone(freq, type, start, dur, vol, echo) {
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.type = type; osc.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(vol, start + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    osc.connect(g); g.connect(master);
+    if (echo) g.connect(delay);
+    osc.start(start); osc.stop(start + dur + 0.05);
   }
-  function playBassNote() {
-    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
-    osc.type = 'square'; osc.frequency.value = bassline[bi % bassline.length];
-    gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.09, audioCtx.currentTime + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.28);
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.3); bi++;
+
+  function kick(start) {
+    const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+    osc.frequency.setValueAtTime(150, start);
+    osc.frequency.exponentialRampToValueAtTime(45, start + 0.12);
+    g.gain.setValueAtTime(0.9, start);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + 0.18);
+    osc.connect(g); g.connect(master);
+    osc.start(start); osc.stop(start + 0.2);
   }
-  function playHiHat() {
-    const bufferSize = audioCtx.sampleRate * 0.03;
-    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+
+  function noiseHit(start, dur, filterType, filterFreq, vol) {
+    const size = Math.floor(audioCtx.sampleRate * dur);
+    const buffer = audioCtx.createBuffer(1, size, audioCtx.sampleRate);
     const data = buffer.getChannelData(0);
-    for (let j = 0; j < bufferSize; j++) data[j] = (Math.random() * 2 - 1) * 0.15;
-    const noise = audioCtx.createBufferSource(); noise.buffer = buffer;
-    const gain = audioCtx.createGain();
-    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.03);
-    noise.connect(gain); gain.connect(audioCtx.destination); noise.start();
+    for (let j = 0; j < size; j++) data[j] = Math.random() * 2 - 1;
+    const src = audioCtx.createBufferSource(); src.buffer = buffer;
+    const filt = audioCtx.createBiquadFilter(); filt.type = filterType; filt.frequency.value = filterFreq;
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(vol, start);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    src.connect(filt); filt.connect(g); g.connect(master);
+    src.start(start); src.stop(start + dur);
+  }
+  const hat   = (start, open) => noiseHit(start, open ? 0.09 : 0.03, 'highpass', 8000, open ? 0.12 : 0.07);
+  const snare = (start) => { noiseHit(start, 0.16, 'bandpass', 1800, 0.4); };
+
+  // --- chord progression: Am – F – C – G (uplifting, catchy) ---
+  const chords = [
+    { bass: 110.00, notes: [220.00, 261.63, 329.63] }, // Am
+    { bass: 174.61, notes: [174.61, 220.00, 261.63] }, // F
+    { bass: 130.81, notes: [261.63, 329.63, 392.00] }, // C
+    { bass: 196.00, notes: [196.00, 246.94, 293.66] }  // G
+  ];
+  // 32-step lead melody (16th notes over 4 bars), 0 = rest
+  const lead = [
+    659.25, 0, 587.33, 0, 523.25, 0, 587.33, 659.25,
+    523.25, 0, 0, 440.00, 493.88, 0, 523.25, 0,
+    698.46, 0, 659.25, 0, 587.33, 0, 523.25, 0,
+    587.33, 0, 493.88, 0, 440.00, 0, 392.00, 0
+  ];
+
+  const stepDur = 60 / 128 / 4; // 16th notes at 128 BPM
+  let step = 0;
+  let nextTime = audioCtx.currentTime + 0.08;
+
+  function scheduler() {
+    while (nextTime < audioCtx.currentTime + 0.18) {
+      const s = step % 32;
+      const chord = chords[Math.floor(s / 8) % 4];
+      if (s % 4 === 0) tone(chord.bass, 'triangle', nextTime, 0.34, 0.34);      // bassline
+      tone(chord.notes[step % 3] * 2, 'square', nextTime, 0.11, 0.045);          // arp shimmer
+      if (lead[s]) tone(lead[s], 'sawtooth', nextTime, 0.24, 0.085, true);       // lead + echo
+      if (s % 4 === 0) kick(nextTime);                                           // four-on-the-floor
+      if (s % 8 === 4) snare(nextTime);                                          // backbeat
+      hat(nextTime, s % 4 === 2);                                                // hats, open off-beat
+      step++;
+      nextTime += stepDur;
+    }
   }
 
-  playMelodyNote();
-  musicIntervals.push(setInterval(playMelodyNote, 220));
-  musicIntervals.push(setInterval(playBassNote, 440));
-  musicIntervals.push(setInterval(playHiHat, 110));
+  scheduler();
+  musicIntervals.push(setInterval(scheduler, 40));
   musicPlaying = true;
 }
 
 function stopMusic() {
   musicIntervals.forEach(iv => clearInterval(iv));
   musicIntervals = [];
-  if (audioCtx) audioCtx.close();
-  audioCtx = null; musicPlaying = false;
+  if (audioCtx) audioCtx.suspend();
+  musicPlaying = false;
 }
 
 document.getElementById('musicToggle').addEventListener('click', () => {
