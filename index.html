@@ -390,38 +390,38 @@ let combo = 1;
 let comboTimer = null;
 
 const upgrades = [
-  { name: "Praktikantin", baseCost: 8, cps: 0.1, owned: 0, desc: "dreht Tampons von Hand" },
-  { name: "Fabrikarbeiter", baseCost: 45, cps: 1, owned: 0, desc: "automatisiert die Produktion" },
-  { name: "Verpackungsmaschine", baseCost: 220, cps: 5, owned: 0, desc: "verpackt im Akkord" },
-  { name: "Fließband", baseCost: 1200, cps: 25, owned: 0, desc: "massenhaft Tampons" },
-  { name: "Fabrik-Automatisierung", baseCost: 6000, cps: 100, owned: 0, desc: "vollautomatische Tampon-Fabrik" },
-  { name: "KI-gesteuerte Anlage", baseCost: 30000, cps: 500, owned: 0, desc: "KI optimiert die Tampon-Produktion" },
-  { name: "Regionale Zweigfabrik", baseCost: 150000, cps: 2500, owned: 0, desc: "eine ganze Tampon-Fabrik nur für dich" },
-  { name: "Globales Vertriebsnetz", baseCost: 750000, cps: 12000, owned: 0, desc: "Tampons werden weltweit produziert" },
-  { name: "Weltraum-Produktionsstation", baseCost: 3500000, cps: 60000, owned: 0, desc: "Schwerelose Tamponproduktion im Orbit" },
-  { name: "Quantenfabrikator", baseCost: 18000000, cps: 300000, owned: 0, desc: "erschafft Tampons aus reiner Quantenenergie" }
+  { name: "Praktikantin", baseCost: 10, cps: 0.1, owned: 0, desc: "dreht Tampons von Hand" },
+  { name: "Fabrikarbeiter", baseCost: 50, cps: 1, owned: 0, desc: "automatisiert die Produktion" },
+  { name: "Verpackungsmaschine", baseCost: 1000, cps: 5, owned: 0, desc: "verpackt im Akkord" },
+  { name: "Fließband", baseCost: 25000, cps: 25, owned: 0, desc: "massenhaft Tampons" },
+  { name: "Fabrik-Automatisierung", baseCost: 60000, cps: 100, owned: 0, desc: "vollautomatische Tampon-Fabrik" },
+  { name: "KI-gesteuerte Anlage", baseCost: 300000, cps: 500, owned: 0, desc: "KI optimiert die Tampon-Produktion" },
+  { name: "Regionale Zweigfabrik", baseCost: 1500000, cps: 2500, owned: 0, desc: "eine ganze Tampon-Fabrik nur für dich" },
+  { name: "Globales Vertriebsnetz", baseCost: 10000000, cps: 12000, owned: 0, desc: "Tampons werden weltweit produziert" },
+  { name: "Weltraum-Produktionsstation", baseCost: 35000000, cps: 60000, owned: 0, desc: "Schwerelose Tamponproduktion im Orbit" },
+  { name: "Quantenfabrikator", baseCost: 18000000, cps: 30000000, owned: 0, desc: "erschafft Tampons aus reiner Quantenenergie" }
 ];
 
 const specialUpgrades = [
-  { id: "critical", name: "Critical Hit", cost: 1200, owned: false,
+  { id: "critical", name: "Critical Hit", cost: 250, owned: false,
     desc: "10% Chance, dass jeder Tick (Klick oder passiv) 10x zählt",
     effect: () => { critChance += 0.10; } },
-  { id: "kordon", name: "Kordon Mode", cost: 5000, owned: false,
+  { id: "kordon", name: "Kordon Mode", cost: 50000, owned: false,
     desc: "Klicks UND passive Produktion zählen doppelt, für immer",
     effect: () => { clickMultiplier *= 2; passiveMultiplier *= 2; } },
-  { id: "supercrit", name: "Super Critical", cost: 25000, owned: false,
+  { id: "supercrit", name: "Super Critical", cost: 250000, owned: false,
     desc: "Weitere 15% Krit-Chance, wirkt auch passiv",
     effect: () => { critChance += 0.15; } },
-  { id: "goldenperiod", name: "Goldene Periode", cost: 70000, owned: false,
+  { id: "goldenperiod", name: "Goldene Periode", cost: 750000, owned: false,
     desc: "Klick- und Passiv-Multiplikator werden erneut verdoppelt",
     effect: () => { clickMultiplier *= 2; passiveMultiplier *= 2; } },
   { id: "autoclicker", name: "67-Mode", cost: 10000, owned: false,
     desc: "Simuliert 67 automatische Klicks pro Sekunde",
     effect: () => { cps += 67 * clickMultiplier; } },
-  { id: "megacrit", name: "Mega Critical", cost: 500000, owned: false,
+  { id: "megacrit", name: "Mega Critical", cost: 5000000, owned: false,
     desc: "Kritische Treffer zählen jetzt 25x statt 10x, auch passiv",
     effect: () => { critMultiplier = 25; } },
-  { id: "diddyparty", name: "Diddy Party", cost: 1000000, owned: false,
+  { id: "diddyparty", name: "Diddy Party", cost: 10000000, owned: false,
     desc: "Wilde Party-Boost: verdreifacht dauerhaft ALLE Produktionswerte (Klick + passiv)",
     effect: () => { clickMultiplier *= 3; passiveMultiplier *= 3; } }
 ];
@@ -431,10 +431,10 @@ const skins = [
   { id: "classic", name: "Klassik-Baumwolle", cls: "skin-classic", cost: 0,     owned: true,  preview: "linear-gradient(90deg,#d4c3ae,#fffcf5,#d4c3ae)", desc: "Das cremeweiße Original." },
   { id: "red",      name: "Rot-Edition 🩸",    cls: "skin-red",     cost: 500,   owned: false, preview: "linear-gradient(90deg,#7a0000,#ff5252,#7a0000)", desc: "Die blutrote Extra-Stark-Version." },
   { id: "gold",     name: "Gold-Deluxe",       cls: "skin-gold",    cost: 25000, owned: false, preview: "linear-gradient(90deg,#8a6d00,#ffd700,#8a6d00)", desc: "24-Karat für Luxus-Perioden." },
-  { id: "neon",     name: "Neon-Rave",         cls: "skin-neon",    cost: 80000, owned: false, preview: "linear-gradient(90deg,#00332e,#39ff14,#00332e)", desc: "Leuchtet im Dunkeln der Disco." },
-  { id: "diamond",  name: "Diamant-Eis",       cls: "skin-diamond", cost: 250000,owned: false, preview: "linear-gradient(115deg,#a8e6ff,#fff,#7fd4ff)", desc: "Kristallklar und eiskalt." },
-  { id: "galaxy",   name: "Galaxie",           cls: "skin-galaxy",  cost: 900000,owned: false, preview: "linear-gradient(120deg,#1a0033,#7b1fa2,#1a0033)", desc: "Ein Tampon aus dem Universum." },
-  { id: "rainbow",  name: "Regenbogen 🌈",     cls: "skin-rainbow", cost: 5000000,owned: false,preview: "linear-gradient(90deg,#ff004c,#ffe600,#00b0ff,#d500f9)", desc: "Der legendäre Alleskönner." }
+  { id: "neon",     name: "Neon-Rave",         cls: "skin-neon",    cost: 800000, owned: false, preview: "linear-gradient(90deg,#00332e,#39ff14,#00332e)", desc: "Leuchtet im Dunkeln der Disco." },
+  { id: "diamond",  name: "Diamant-Eis",       cls: "skin-diamond", cost: 2500000,owned: false, preview: "linear-gradient(115deg,#a8e6ff,#fff,#7fd4ff)", desc: "Kristallklar und eiskalt." },
+  { id: "galaxy",   name: "Galaxie",           cls: "skin-galaxy",  cost: 90000000,owned: false, preview: "linear-gradient(120deg,#1a0033,#7b1fa2,#1a0033)", desc: "Ein Tampon aus dem Universum." },
+  { id: "rainbow",  name: "Regenbogen 🌈",     cls: "skin-rainbow", cost: 500000000,owned: false,preview: "linear-gradient(90deg,#ff004c,#ffe600,#00b0ff,#d500f9)", desc: "Der legendäre Alleskönner." }
 ];
 let activeSkin = "classic";
 
