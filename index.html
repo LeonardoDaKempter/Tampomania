@@ -527,7 +527,7 @@ const clickUpgrades = [
   { name: "Hydraulik-Presse", baseCost: 250000, power: 3000, owned: 0, desc: "presst mit tonnenschwerer Kraft" },
   { name: "Plasma-Klicker", baseCost: 2000000, power: 18000, owned: 0, desc: "jeder Klick eine Plasmaexplosion" },
   { name: "Quanten-Klick", baseCost: 20000000, power: 120000, owned: 0, desc: "klickt in unendlich vielen Realitäten" },
-  { name: "Gottes-Zeigefinger", baseCost: 200000000, power: 800000, owned: 0, desc: "der Finger der Schöpfung" }
+  { name: "Gottes-Zeigefinger", baseCost: 200000000, power: 1000000, owned: 0, desc: "der Finger der Schöpfung" }
 ];
 function getClickPower() {
   return clickBase + clickUpgrades.reduce((sum, u) => sum + u.owned * u.power, 0);
