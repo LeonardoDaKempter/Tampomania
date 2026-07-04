@@ -471,10 +471,10 @@ let passiveMultiplier = 1;
 
 const activePowers = {};
 const powerUps = [
-  { id: 'frenzy', name: 'Klickrausch', cost: 3500, duration: 20, desc: '5x Klick-Power für 20 Sekunden', activate: () => ({ clickMultiplierMult: 5 }) },
+  { id: 'frenzy', name: 'Tamponrausch', cost: 3500, duration: 20, desc: '5x Klick-Power für 20 Sekunden', activate: () => ({ clickMultiplierMult: 5 }) },
   { id: 'overdrive', name: 'Produktionsrausch', cost: 12000, duration: 25, desc: '4x passive Produktion für 25 Sekunden', activate: () => ({ passiveMultiplierMult: 4 }) },
   { id: 'lucky', name: 'Glücksphase', cost: 18000, duration: 18, desc: '+35% Krit-Chance für 18 Sekunden', activate: () => ({ critChanceBonus: 0.35 }) },
-  { id: 'goldrush', name: 'Goldrausch', cost: 90000, duration: 15, desc: '3x Klick UND 3x Produktion für 15 Sekunden', activate: () => ({ clickMultiplierMult: 3, passiveMultiplierMult: 3 }) },
+  { id: 'goldrush', name: 'Tamponhimmel', cost: 90000, duration: 15, desc: '3x Klick UND 3x Produktion für 15 Sekunden', activate: () => ({ clickMultiplierMult: 3, passiveMultiplierMult: 3 }) },
   { id: 'hypercrit', name: 'Hyper-Krit', cost: 200000, duration: 15, desc: 'Kritische Treffer zählen 3x so viel + 20% Krit-Chance für 15s', activate: () => ({ critMultiplierMult: 3, critChanceBonus: 0.20 }) },
   { id: 'timewarp', name: 'Zeitraffer', cost: 600000, duration: 12, desc: '8x passive Produktion für 12 Sekunden', activate: () => ({ passiveMultiplierMult: 8 }) },
   { id: 'sugarhigh', name: 'Zuckerschock', cost: 1500000, duration: 20, desc: '7x Klick-Power für 20 Sekunden', activate: () => ({ clickMultiplierMult: 7 }) },
