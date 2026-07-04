@@ -318,21 +318,104 @@ body.shake { animation: shake 0.3s; }
   font-weight: bold; box-shadow: 0 6px 18px rgba(0,0,0,0.3); z-index: 1001; opacity: 0; transition: all 0.4s; pointer-events: none; }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-#musicToggle {
+/* in-game settings gear */
+#settingsBtn {
   position: fixed; top: 15px; right: 15px;
   background: #c2185b; color: white; border: none; border-radius: 50%;
   width: 55px; height: 55px; font-size: 1.5em; cursor: pointer; z-index: 1000;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.3); transition: transform 0.15s;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.3); transition: transform 0.2s;
 }
-#musicToggle:hover { transform: scale(1.1); }
+#settingsBtn:hover { transform: scale(1.1) rotate(45deg); }
 
-#resetBtn {
-  position: fixed; top: 15px; left: 15px;
-  background: #8e24aa; color: white; border: none; border-radius: 50%;
-  width: 48px; height: 48px; font-size: 1.2em; cursor: pointer; z-index: 1000;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.3); transition: transform 0.15s;
+/* start menu */
+#startScreen {
+  position: fixed; inset: 0; display: none; flex-direction: column;
+  align-items: center; justify-content: center; z-index: 998; color: #fff;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 28%, #e91e63, #a3134d 60%, #5c0533 100%);
 }
-#resetBtn:hover { transform: scale(1.1); }
+/* slowly rotating spotlight behind everything */
+#startScreen::before {
+  content: ''; position: absolute; top: 50%; left: 50%; width: 170vmax; height: 170vmax;
+  transform: translate(-50%,-50%); pointer-events: none; z-index: 0;
+  background: conic-gradient(from 0deg,
+    rgba(255,255,255,0.12), transparent 22%, rgba(255,64,129,0.18) 50%,
+    transparent 78%, rgba(255,255,255,0.12));
+  animation: spotSpin 20s linear infinite;
+}
+@keyframes spotSpin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+#startFloats { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.startFloat { position: absolute; bottom: -40px; opacity: 0; animation: rise linear infinite; }
+
+/* the real CSS tampon on stage */
+.startStage {
+  position: relative; z-index: 1; width: 220px; height: 300px;
+  display: flex; align-items: center; justify-content: center; margin-bottom: 8px;
+}
+.startGlow {
+  position: absolute; width: 250px; height: 250px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,190,215,0.75), rgba(236,64,122,0.35) 45%, transparent 70%);
+  filter: blur(6px); animation: glowPulse 3.2s ease-in-out infinite; z-index: 0;
+}
+@keyframes glowPulse { 0%,100%{ transform: scale(0.9); opacity: 0.7; } 50%{ transform: scale(1.12); opacity: 1; } }
+.startTampon {
+  position: relative; z-index: 1; width: 120px; height: 240px;
+  filter: drop-shadow(0 16px 12px rgba(0,0,0,0.45));
+  animation: startFloatAnim 3.2s ease-in-out infinite;
+}
+@keyframes startFloatAnim { 0%,100%{ transform: translateY(0) rotate(-3deg); } 50%{ transform: translateY(-18px) rotate(3deg); } }
+.startPedestal {
+  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+  width: 150px; height: 26px; border-radius: 50%; z-index: 0;
+  background: radial-gradient(ellipse, rgba(0,0,0,0.4), transparent 70%);
+  animation: pedestalPulse 3.2s ease-in-out infinite;
+}
+@keyframes pedestalPulse { 0%,100%{ transform: translateX(-50%) scale(1); opacity: 0.5; } 50%{ transform: translateX(-50%) scale(0.82); opacity: 0.32; } }
+
+#startScreen h2 {
+  font-size: 3.4em; margin: 6px 0 4px; letter-spacing: 1px; font-weight: 800;
+  background: linear-gradient(90deg,#fff,#ffd6e7,#ffffff,#ffb3d1,#fff);
+  background-size: 300% 100%;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 3px 12px rgba(0,0,0,0.45));
+  animation: shine 4s linear infinite;
+}
+.startTagline { font-size: 1.15em; opacity: 0.92; margin: 0 0 30px; text-shadow: 0 2px 6px rgba(0,0,0,0.35); }
+#startBtn { animation: btnPulse 1.9s ease-in-out infinite; }
+@keyframes btnPulse {
+  0%,100% { box-shadow: 0 6px 16px rgba(0,0,0,0.25); }
+  50% { box-shadow: 0 6px 28px rgba(255,64,129,0.75); }
+}
+.menuBtns { display: flex; flex-direction: column; gap: 16px; width: 260px; max-width: 80vw; }
+.menuBtn {
+  font-size: 1.3em; font-weight: bold; padding: 16px 24px; border: none; border-radius: 16px;
+  cursor: pointer; color: #ad1457; background: #fff;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25); transition: transform 0.12s, box-shadow 0.12s;
+}
+.menuBtn:hover { transform: translateY(-3px); box-shadow: 0 10px 22px rgba(0,0,0,0.3); }
+.menuBtn:active { transform: translateY(0); }
+.menuBtn.secondary { background: rgba(255,255,255,0.18); color: #fff; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.65); }
+
+/* settings overlay */
+#settingsScreen {
+  position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+  z-index: 1002; background: rgba(80,0,30,0.55); backdrop-filter: blur(4px);
+}
+.settingsBox {
+  background: linear-gradient(145deg, #ffffff, #fff0f5); color: #ad1457;
+  border-radius: 22px; padding: 28px 26px; width: 320px; max-width: 90vw;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35); border: 2px solid #f8bbd0;
+  display: flex; flex-direction: column; gap: 14px; text-align: center;
+}
+.settingsBox h2 { margin: 0 0 6px; color: #6a1b9a; }
+.settingsRowBtn {
+  font-size: 1.05em; font-weight: bold; padding: 14px 16px; border: none; border-radius: 12px;
+  cursor: pointer; color: #fff; background: linear-gradient(145deg, #ec407a, #c2185b);
+  box-shadow: 0 4px 10px rgba(194,24,91,0.35); transition: filter 0.12s;
+}
+.settingsRowBtn:hover { filter: brightness(1.08); }
+.settingsRowBtn.danger { background: linear-gradient(145deg, #ef5350, #b71c1c); box-shadow: 0 4px 10px rgba(183,28,28,0.4); }
 
 #powerBar {
   display: flex; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden;
@@ -406,10 +489,37 @@ body.shake { animation: shake 0.3s; }
 
 <div id="critFlash"></div>
 <div id="toast"></div>
-<button id="musicToggle">🔇</button>
-<button id="resetBtn" title="Spielstand zurücksetzen">🗑️</button>
+
+<div id="startScreen">
+  <div id="startFloats"></div>
+  <div class="startStage">
+    <div class="startGlow"></div>
+    <div class="startTampon">
+      <div class="tampon-blood">🩸</div>
+      <div class="tampon-body"></div>
+      <div class="tampon-string"></div>
+    </div>
+    <div class="startPedestal"></div>
+  </div>
+  <h2>Tamponmania</h2>
+  <p class="startTagline">Klicke dich zum Tampon-Imperium!</p>
+  <div class="menuBtns">
+    <button id="startBtn" class="menuBtn">▶ Start</button>
+    <button id="openSettingsBtn" class="menuBtn secondary">⚙️ Einstellungen</button>
+  </div>
+</div>
+
+<div id="settingsScreen">
+  <div class="settingsBox">
+    <h2>⚙️ Einstellungen</h2>
+    <button id="musicToggle" class="settingsRowBtn">🔇 Musik: Aus</button>
+    <button id="resetBtn" class="settingsRowBtn danger">🗑️ Fortschritt löschen</button>
+    <button id="closeSettingsBtn" class="menuBtn">Zurück</button>
+  </div>
+</div>
 
 <div id="game">
+<button id="settingsBtn" title="Einstellungen">⚙️</button>
 <h1>🩸Tamponmania</h1>
 <div id="statBar">
   <div><span class="statLabel">Vorrat</span><div id="count">0</div></div>
@@ -452,6 +562,22 @@ body.shake { animation: shake 0.3s; }
   }
 })();
 
+/* ---------- start-screen floaters ---------- */
+(function () {
+  const fx = document.getElementById('startFloats');
+  const emojis = ['🩸','💖','✨','💗','🧻'];
+  for (let i = 0; i < 12; i++) {
+    const s = document.createElement('div');
+    s.className = 'startFloat';
+    s.textContent = emojis[i % emojis.length];
+    s.style.left = (Math.random() * 100) + '%';
+    s.style.fontSize = (1 + Math.random() * 1.8) + 'em';
+    s.style.animationDuration = (8 + Math.random() * 10) + 's';
+    s.style.animationDelay = (-Math.random() * 12) + 's';
+    fx.appendChild(s);
+  }
+})();
+
 /* ---------- loading ---------- */
 let progress = 0;
 const loadInterval = setInterval(() => {
@@ -463,7 +589,7 @@ const loadInterval = setInterval(() => {
       document.getElementById('loadingScreen').style.opacity = 0;
       setTimeout(() => {
         document.getElementById('loadingScreen').style.display = 'none';
-        document.getElementById('game').style.display = 'block';
+        document.getElementById('startScreen').style.display = 'flex';
       }, 500);
     }, 300);
   }
@@ -1139,8 +1265,30 @@ function stopMusic() {
 
 document.getElementById('musicToggle').addEventListener('click', () => {
   const btn = document.getElementById('musicToggle');
-  if (musicPlaying) { stopMusic(); btn.textContent = '🔇'; }
-  else { startMusic(); btn.textContent = '🔊'; }
+  if (musicPlaying) { stopMusic(); btn.textContent = '🔇 Musik: Aus'; }
+  else { startMusic(); btn.textContent = '🔊 Musik: An'; }
+});
+
+/* ---------- start menu & settings navigation ---------- */
+const startScreen = document.getElementById('startScreen');
+const settingsScreen = document.getElementById('settingsScreen');
+
+document.getElementById('startBtn').addEventListener('click', () => {
+  startScreen.style.display = 'none';
+  document.getElementById('game').style.display = 'block';
+});
+document.getElementById('openSettingsBtn').addEventListener('click', () => {
+  settingsScreen.style.display = 'flex';
+});
+document.getElementById('settingsBtn').addEventListener('click', () => {
+  settingsScreen.style.display = 'flex';
+});
+document.getElementById('closeSettingsBtn').addEventListener('click', () => {
+  settingsScreen.style.display = 'none';
+});
+// click on the dark backdrop closes settings
+settingsScreen.addEventListener('click', (e) => {
+  if (e.target === settingsScreen) settingsScreen.style.display = 'none';
 });
 </script>
 </body>
